@@ -1,7 +1,7 @@
 import type React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import type { EmptyObject } from 'type-fest'
-import { describe, expect, type Mock, test, vi } from 'vitest'
+import type { Mock } from 'vitest'
 
 import {
   componentTestSuite,
@@ -107,8 +107,6 @@ describe('componentTestSuite', () => {
     // biome-ignore lint/suspicious/noTsIgnore: is valid
     // @ts-ignore is present
     testSpy = vi.spyOn(globalThis, 'test')
-
-    vi.clearAllMocks()
   })
 
   test('creates suite with default render test when no tests provided', async () => {
