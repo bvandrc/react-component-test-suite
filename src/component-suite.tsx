@@ -19,10 +19,10 @@ import type {
 import { type AnyFunctionComponent, getComponentName } from './utils'
 
 /**
- * Options that apply to an entire component test suite / all tests within it.
+ * Options that apply to a whole component test suite, rather than one test.
  *
  * - Use `insideSuite` to register test lifecycle hooks (e.g., `beforeEach`,
- *   `beforeAll`, `afterEach`, `afterAll`).
+ *   `beforeAll`, `afterEach`, and `afterAll`).
  * - Use `suiteFn` if debugging tests via `describe.skip` or `describe.only`.
  */
 export type OverallOptions = {
@@ -156,9 +156,8 @@ type CoreTestSuiteArgs = TestSuiteArgs<{
 type CoreTestSuiteTestsList = ExtractSuiteArgs<CoreTestSuiteArgs>['tests']
 
 /**
- * Defines and executes a Vitest `describe` block containing one or more tests
- * for a React function component. The `describe` suite name is derived from the
- * component's name.
+ * Defines and runs a `describe` block of render tests for a React function
+ * component, named after the component itself.
  *
  * Behavior:
  * - Ensures at least one render test runs (a default test if none provided).

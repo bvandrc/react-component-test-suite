@@ -2,7 +2,7 @@
 
 `react-component-test-suite` — consistent, reusable test suites for React components in Jest or Vitest, naming each `describe` block after the component under test. Published to npm, bundled by tsdown.
 
-- **Layout**: `src/componentSuite.tsx` is the entrypoint, `src/utils.ts` its helpers; unit tests live in `src/__test__/` with shared fixtures in `src/__test__/__helpers__/`.
+- **Layout**: `src/component-suite.tsx` is the entrypoint, `src/utils.ts` its helpers; unit tests live in `src/__tests__/` with shared fixtures in `src/__tests__/__helpers__/`.
 - **Peers**: `react`, `@types/react`, and the Testing Library packages are peers; `vitest` and `jest` are optional peers, so nothing may import either test runner at module scope.
 
 ## Code conventions
@@ -10,6 +10,7 @@
 Conventions live outside this file, synced from https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 
 @conventions/typescript.md — language-level TypeScript/JavaScript rules
+@conventions/ts-unit-testing.md — unit test layout, naming, fixtures, and assertions
 @conventions/all.md — practice for every repo: branches, formatting, markdown, PR reviews
 
 ## Commands

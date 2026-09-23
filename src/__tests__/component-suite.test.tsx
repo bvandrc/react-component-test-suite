@@ -9,8 +9,8 @@ import {
   type OverallOptions,
   resolveTestSuiteArgs,
   type TestList,
-} from '../componentSuite'
-import { spyOnVitestCallers } from './__helpers__/spyOnTests'
+} from '../component-suite'
+import { spyOnVitestCallers } from './__helpers__/spy-on-tests'
 
 const TestComponent = () => <div>Test Component</div>
 
@@ -20,20 +20,20 @@ const TestWrapper = ({ children }: React.PropsWithChildren<EmptyObject>) => (
   <div data-testid="wrapper">{children}</div>
 )
 
-const testListSingle = [{ testTitleSuffix: 'test 1' }] satisfies TestList
-const testListMultiple = [
-  ...testListSingle,
+const TEST_LIST_SINGLE = [{ testTitleSuffix: 'test 1' }] satisfies TestList
+const TEST_LIST_MULTIPLE = [
+  ...TEST_LIST_SINGLE,
   { testTitleSuffix: 'test 2', Component: <TestComponent /> },
 ] satisfies TestList
 
-const overallOptions = {
+const OVERALL_OPTIONS = {
   insideSuite: vi.fn(),
   Wrapper: TestWrapper,
 } satisfies OverallOptions
 
 test('TestList type', () => {
   const tests = [
-    ...testListMultiple,
+    ...TEST_LIST_MULTIPLE,
     { testTitleSuffix: 'test 3' },
     //@ts-expect-error missing component
   ] satisfies TestList
@@ -51,26 +51,26 @@ describe('resolveTestSuiteArgs', () => {
   })
 
   test('resolves with only test list', () => {
-    const result = resolveTestSuiteArgs([testListSingle])
+    const result = resolveTestSuiteArgs([TEST_LIST_SINGLE])
     expect(result).toEqual({
       overallOptions: {},
-      tests: testListSingle,
+      tests: TEST_LIST_SINGLE,
     })
   })
 
   test('resolves with only overall options', () => {
-    const result = resolveTestSuiteArgs([overallOptions])
+    const result = resolveTestSuiteArgs([OVERALL_OPTIONS])
     expect(result).toEqual({
-      overallOptions,
+      overallOptions: OVERALL_OPTIONS,
       tests: [],
     })
   })
 
   test('resolves with overall options and test list', () => {
-    const result = resolveTestSuiteArgs([overallOptions, testListMultiple])
+    const result = resolveTestSuiteArgs([OVERALL_OPTIONS, TEST_LIST_MULTIPLE])
     expect(result).toEqual({
-      overallOptions,
-      tests: testListMultiple,
+      overallOptions: OVERALL_OPTIONS,
+      tests: TEST_LIST_MULTIPLE,
     })
   })
 })
@@ -90,7 +90,7 @@ describe('componentTestSuite - execution', () => {
 describe('componentTestSuite', () => {
   const mockRender = vi.fn((ui: React.ReactElement) => render(ui))
 
-  const mockSuiteArgs = {
+  const MOCK_SUITE_ARGS = {
     testTitle: 'renders the component',
     renderFunction: mockRender,
   }
@@ -112,7 +112,7 @@ describe('componentTestSuite', () => {
   })
 
   test('creates suite with default render test when no tests provided', async () => {
-    await componentTestSuite(<TestComponent />, mockSuiteArgs)
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS)
 
     expect(mockRender).toHaveBeenCalled()
     expect(describeSpy).toHaveBeenCalledWith(
@@ -120,13 +120,13 @@ describe('componentTestSuite', () => {
       expect.any(Function)
     )
     expect(testSpy).toHaveBeenCalledWith(
-      mockSuiteArgs.testTitle,
+      MOCK_SUITE_ARGS.testTitle,
       expect.any(Function)
     )
   })
 
   test('creates suite with single test', async () => {
-    await componentTestSuite(<TestComponent />, mockSuiteArgs, {
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS, {
       testTitleSuffix: 'with default props',
     })
 
@@ -136,14 +136,17 @@ describe('componentTestSuite', () => {
       expect.any(Function)
     )
     expect(testSpy.mock.calls).toEqual([
-      [`${mockSuiteArgs.testTitle} - with default props`, expect.any(Function)],
+      [
+        `${MOCK_SUITE_ARGS.testTitle} - with default props`,
+        expect.any(Function),
+      ],
     ])
   })
 
   test('creates suite with multiple tests', async () => {
     await componentTestSuite(
       <TestComponent />,
-      mockSuiteArgs,
+      MOCK_SUITE_ARGS,
       { testTitleSuffix: 'test 1' },
       { testTitleSuffix: 'test 2', Component: <TestComponent /> }
     )
@@ -154,8 +157,8 @@ describe('componentTestSuite', () => {
       expect.any(Function)
     )
     expect(testSpy.mock.calls).toEqual([
-      [`${mockSuiteArgs.testTitle} - test 1`, expect.any(Function)],
-      [`${mockSuiteArgs.testTitle} - test 2`, expect.any(Function)],
+      [`${MOCK_SUITE_ARGS.testTitle} - test 1`, expect.any(Function)],
+      [`${MOCK_SUITE_ARGS.testTitle} - test 2`, expect.any(Function)],
     ])
   })
 
@@ -163,7 +166,7 @@ describe('componentTestSuite', () => {
     const insideSuite = vi.fn()
 
     await componentTestSuite(<TestComponent />, {
-      ...mockSuiteArgs,
+      ...MOCK_SUITE_ARGS,
       insideSuite,
     })
 
@@ -173,7 +176,9 @@ describe('componentTestSuite', () => {
   test('calls beforeRender hook', async () => {
     const beforeRender = vi.fn()
 
-    await componentTestSuite(<TestComponent />, mockSuiteArgs, { beforeRender })
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS, {
+      beforeRender,
+    })
 
     expect(beforeRender).toHaveBeenCalledOnce()
   })
@@ -181,7 +186,9 @@ describe('componentTestSuite', () => {
   test('calls afterRender hook', async () => {
     const afterRender = vi.fn()
 
-    await componentTestSuite(<TestComponent />, mockSuiteArgs, { afterRender })
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS, {
+      afterRender,
+    })
 
     await waitFor(() => {
       expect(afterRender).toHaveBeenCalledOnce()
@@ -193,7 +200,9 @@ describe('componentTestSuite', () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
     })
 
-    await componentTestSuite(<TestComponent />, mockSuiteArgs, { beforeRender })
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS, {
+      beforeRender,
+    })
 
     expect(beforeRender).toHaveBeenCalledOnce()
   })
@@ -203,7 +212,9 @@ describe('componentTestSuite', () => {
       await new Promise((resolve) => setTimeout(resolve, 10))
     })
 
-    await componentTestSuite(<TestComponent />, mockSuiteArgs, { afterRender })
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS, {
+      afterRender,
+    })
 
     await waitFor(() => {
       expect(afterRender).toHaveBeenCalledOnce()
@@ -212,7 +223,7 @@ describe('componentTestSuite', () => {
 
   test('uses custom Wrapper', async () => {
     await componentTestSuite(<TestComponent />, {
-      ...mockSuiteArgs,
+      ...MOCK_SUITE_ARGS,
       Wrapper: TestWrapper,
     })
 
@@ -225,7 +236,7 @@ describe('componentTestSuite', () => {
     expect(() => {
       componentTestSuite(
         <TestComponent />,
-        mockSuiteArgs,
+        MOCK_SUITE_ARGS,
         {},
         {
           testTitleSuffix: 'different component',
