@@ -1,4 +1,4 @@
-import type React from 'react'
+import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import type { EmptyObject } from 'type-fest'
 import type { Mock } from 'vitest'
@@ -19,6 +19,14 @@ const DifferentTestComponent = () => <div>Test Component</div>
 const TestWrapper = ({ children }: React.PropsWithChildren<EmptyObject>) => (
   <div data-testid="wrapper">{children}</div>
 )
+
+/** Anonymous, so `displayName` is the only name the suite can be given. */
+const makeAnonymous = (): React.FC => () => <div>Anonymous</div>
+const AnonymousComponent = makeAnonymous()
+AnonymousComponent.displayName = 'NamedByDisplayName'
+
+/** A memo has neither a function name nor a displayName of its own. */
+const MemoComponent = React.memo(() => <div>Memo</div>)
 
 const TEST_LIST_SINGLE = [{ testTitleSuffix: 'test 1' }] satisfies TestList
 const TEST_LIST_MULTIPLE = [
@@ -242,6 +250,62 @@ describe('componentTestSuite', () => {
         }
       )
     }).toThrow('all tests must be of same component type')
+  })
+
+  test('names the suite from displayName when the function has no name', async () => {
+    await componentTestSuite(<AnonymousComponent />, MOCK_SUITE_ARGS)
+
+    expect(describeSpy).toHaveBeenCalledWith(
+      'NamedByDisplayName',
+      expect.any(Function)
+    )
+  })
+
+  test('says what to do when a component has no name to take', () => {
+    // A memo has neither, and the suite cannot be titled without one.
+    expect(() =>
+      componentTestSuite(<MemoComponent />, MOCK_SUITE_ARGS)
+    ).toThrow('Component has no name.')
+  })
+
+  test('runs the suite through the suiteFn it is given', async () => {
+    const suiteFn = vi.fn((_name: string, fn: () => void) => {
+      fn()
+    })
+
+    await componentTestSuite(<TestComponent />, {
+      ...MOCK_SUITE_ARGS,
+      // What `describe.only` is passed as while debugging one suite.
+      suiteFn: suiteFn as unknown as typeof describe.only,
+    })
+
+    expect(suiteFn).toHaveBeenCalledWith('TestComponent', expect.any(Function))
+    expect(describeSpy).not.toHaveBeenCalled()
+  })
+
+  test('renders through a Fragment when no Wrapper is given', async () => {
+    await componentTestSuite(<TestComponent />, MOCK_SUITE_ARGS)
+
+    // A Fragment adds no element, so the wrapper cannot change the markup.
+    expect(mockRender.mock.calls[0][0].type).toBe(React.Fragment)
+  })
+
+  test('renders between the two hooks, not before or after both', async () => {
+    const order: string[] = []
+    const renderFunction = vi.fn(() => {
+      order.push('render')
+    })
+
+    await componentTestSuite(
+      <TestComponent />,
+      { ...MOCK_SUITE_ARGS, renderFunction },
+      {
+        beforeRender: () => order.push('before'),
+        afterRender: () => order.push('after'),
+      }
+    )
+
+    await waitFor(() => expect(order).toEqual(['before', 'render', 'after']))
   })
 })
 
