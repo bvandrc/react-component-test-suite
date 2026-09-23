@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown'
 import pkg from './package.json' with { type: 'json' }
 
 export default defineConfig({
-  entry: { index: 'src/componentSuite.tsx' },
+  entry: { index: 'src/component-suite.tsx' },
   target: 'es2023',
   format: ['esm'],
   clean: true,

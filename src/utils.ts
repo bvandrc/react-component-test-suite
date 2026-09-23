@@ -1,8 +1,6 @@
 export type AnyFunctionComponent = React.FunctionComponentElement<unknown>
 
-/**
- * Get a component's name for test naming purposes.
- */
+/** The component's name, used to title the suite written for it. */
 export const getComponentName = (Component: AnyFunctionComponent): string => {
   const name =
     Component.type.name ||
