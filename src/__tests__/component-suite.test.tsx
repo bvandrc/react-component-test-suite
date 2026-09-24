@@ -261,7 +261,7 @@ describe('componentTestSuite', () => {
     )
   })
 
-  test('says what to do when a component has no name to take', () => {
+  test('throws when a component has no name to take', () => {
     // A memo has neither, and the suite cannot be titled without one.
     expect(() =>
       componentTestSuite(<MemoComponent />, MOCK_SUITE_ARGS)
