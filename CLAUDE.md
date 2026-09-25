@@ -2,7 +2,7 @@
 
 `react-component-test-suite` — consistent, reusable test suites for React components in Jest or Vitest, naming each `describe` block after the component under test. Published to npm, bundled by tsdown.
 
-- **Layout**: `src/component-suite.tsx` is the entrypoint, `src/utils.ts` its helpers; unit tests live in `src/__tests__/` with shared fixtures in `src/__tests__/__helpers__/`.
+- **Layout**: `src/component-suite.tsx` is the entrypoint, `src/utils/index.ts` its helpers; unit tests live in `src/__tests__/` with shared fixtures in `src/__tests__/__helpers__/`.
 - **Peers**: `react`, `@types/react`, and the Testing Library packages are peers; `vitest` and `jest` are optional peers, so nothing may import either test runner at module scope.
 
 ## Code conventions
@@ -22,5 +22,5 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 ## Repo conventions
 
 - **Package manager**: pnpm. `npm install` writes a competing `package-lock.json` that CI ignores.
-- **Typed `Object` walks**: `typedKeys`, `typedEntries`, and `typedFromEntries`, exported from `src/utils.ts`, are ours. They are the builtins with the cast a call site would otherwise write by hand, so reach for one instead of asserting the result -- and leave `Object.keys`/`entries`/`fromEntries` alone where the widened type is what's wanted.
+- **Typed `Object` walks**: `typedKeys`, `typedEntries`, and `typedFromEntries`, exported from `src/utils/index.ts`, are ours. They are the builtins with the cast a call site would otherwise write by hand, so reach for one instead of asserting the result -- and leave `Object.keys`/`entries`/`fromEntries` alone where the widened type is what's wanted.
 - **Convention files**: `conventions/` is synced from https://github.com/bvandrc/bvandrc-conventions by `.github/workflows/sync-conventions.yml` and overwritten on every sync. Edit a rule upstream, never in that directory.
