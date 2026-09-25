@@ -30,6 +30,7 @@
   "author": "Blake Vandercar <bvandercar@outlook.com>",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "source": "src/component-suite.tsx",
   "exports": {
     ".": {
