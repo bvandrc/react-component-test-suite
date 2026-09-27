@@ -8,6 +8,7 @@ interface SpyTestCall {
 
 /**
  * Spy on global describe/it/test and capture the structure.
+ *
  * Also executes the `it`/`test` functions automatically.
  */
 export function spyOnVitestCallers() {
