@@ -84,7 +84,7 @@ componentTestSuite(
     Component: <MyComponent />,
     beforeRender: async () => await setupDatabase(),
     afterRender: async () => await cleanupDatabase(),
-  },
+  }
 )
 ```
 
@@ -150,7 +150,7 @@ componentTestSuite(
     renderFunction: render,
     Wrapper: ThemeWrapper,
   },
-  ...tests,
+  ...tests
 )
 ```
 
@@ -164,7 +164,7 @@ componentTestSuite(
     renderFunction: render,
     suiteFn: describe.only, // Run only this suite
   },
-  ...tests,
+  ...tests
 )
 ```
 
