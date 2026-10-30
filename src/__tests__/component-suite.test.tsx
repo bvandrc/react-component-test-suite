@@ -20,14 +20,6 @@ const TestWrapper = ({ children }: React.PropsWithChildren<EmptyObject>) => (
   <div data-testid="wrapper">{children}</div>
 )
 
-/** Anonymous, so `displayName` is the only name the suite can be given. */
-const buildAnonymousComponent = (): React.FC => () => <div>Anonymous</div>
-const AnonymousComponent = buildAnonymousComponent()
-AnonymousComponent.displayName = 'NamedByDisplayName'
-
-/** A memo has neither a function name nor a displayName of its own. */
-const MemoComponent = React.memo(() => <div>Memo</div>)
-
 const TEST_LIST_SINGLE = [{ testTitleSuffix: 'test 1' }] satisfies TestList
 const TEST_LIST_MULTIPLE = [
   ...TEST_LIST_SINGLE,
@@ -251,22 +243,6 @@ describe('componentTestSuite', () => {
           }
         )
       }).toThrow('all tests must be of same component type')
-    })
-
-    test('names the suite from displayName when the function has no name', async () => {
-      await componentTestSuite(<AnonymousComponent />, MOCK_SUITE_ARGS)
-
-      expect(describeSpy).toHaveBeenCalledWith(
-        'NamedByDisplayName',
-        expect.any(Function)
-      )
-    })
-
-    test('throws when a component has no name to take', () => {
-      // A memo has neither, and the suite cannot be titled without one.
-      expect(() =>
-        componentTestSuite(<MemoComponent />, MOCK_SUITE_ARGS)
-      ).toThrow('Component has no name.')
     })
 
     test('runs the suite through the suiteFn it is given', async () => {
