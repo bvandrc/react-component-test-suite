@@ -96,6 +96,7 @@
     "happy-dom": "^21",
     "react": ">=18",
     "react-dom": ">=18",
+    "ts-extras": "^1",
     "tsdown": "^0.23",
     "typescript": "^7",
     "vitest": "^5"
